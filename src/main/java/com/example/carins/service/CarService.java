@@ -32,7 +32,6 @@ public class CarService {
         List<InsurancePolicy> badPolicies = policyRepository.findByCarIdAndEndDateIsNull(carId);
         for (InsurancePolicy policy : badPolicies) {
             policy.setEndDate(policy.getStartDate().plusYears(1));
-            System.out.println("Fixed policy " + policy.getId());
         }
         if (!badPolicies.isEmpty()) {
             policyRepository.saveAll(badPolicies);
