@@ -1,6 +1,7 @@
 package com.example.carins.service;
 
 import com.example.carins.model.Car;
+import com.example.carins.model.InsurancePolicy;
 import com.example.carins.repo.CarRepository;
 import com.example.carins.repo.InsurancePolicyRepository;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,16 @@ public class CarService {
     public boolean isInsuranceValid(Long carId, LocalDate date) {
         if (carId == null || date == null) return false;
         // TODO: optionally throw NotFound if car does not exist
+
+        // Fix policies with null endDate
+        List<InsurancePolicy> badPolicies = policyRepository.findByCarIdAndEndDateIsNull(carId);
+        for (InsurancePolicy policy : badPolicies) {
+            policy.setEndDate(policy.getStartDate().plusYears(1));
+            System.out.println("Fixed policy " + policy.getId());
+        }
+        if (!badPolicies.isEmpty()) {
+            policyRepository.saveAll(badPolicies);
+        }
         return policyRepository.existsActiveOnDate(carId, date);
     }
 }
