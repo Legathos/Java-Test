@@ -31,10 +31,23 @@ public class CarController {
 
     @GetMapping("/cars/{carId}/insurance-valid")
     public ResponseEntity<?> isInsuranceValid(@PathVariable Long carId, @RequestParam String date) {
-        // TODO: validate date format and handle errors consistently
-        LocalDate d = LocalDate.parse(date);
-        boolean valid = service.isInsuranceValid(carId, d);
-        return ResponseEntity.ok(new InsuranceValidityResponse(carId, d.toString(), valid));
+        try {
+            LocalDate d = LocalDate.parse(date);
+
+            LocalDate minDate = LocalDate.of(1990, 1, 1);
+            LocalDate maxDate = LocalDate.now().plusYears(30);
+
+            if (d.isBefore(minDate) || d.isAfter(maxDate)) {
+                return ResponseEntity.badRequest()
+                    .body("Date is outside supported range (must be between " + minDate + " and " + maxDate + ")");
+            }
+
+            boolean valid = service.isInsuranceValid(carId, d);
+            return ResponseEntity.ok(new InsuranceValidityResponse(carId, d.toString(), valid));
+        } catch (java.time.format.DateTimeParseException e) {
+            return ResponseEntity.badRequest()
+                .body("Invalid date format. Please use ISO format YYYY-MM-DD");
+        }
     }
 
     private CarDto toDto(Car c) {
