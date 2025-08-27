@@ -6,7 +6,9 @@ import com.example.carins.model.InsurancePolicy;
 import com.example.carins.repo.CarRepository;
 import com.example.carins.repo.ClaimRepository;
 import com.example.carins.repo.InsurancePolicyRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,11 +49,18 @@ public class CarService {
     public Claim registerInsuranceClaim(Long carId, LocalDate claimDate, String description, Double amount) {
         Optional<Car> carOpt = carRepository.findById(carId);
         if (carOpt.isEmpty()) {
-            throw new IllegalArgumentException("Car not found with ID: " + carId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found with ID: " + carId);
         }
 
         Car car = carOpt.get();
         Claim claim = new Claim(car, claimDate, description, amount);
         return claimRepository.save(claim);
     }
+
+    public List<Claim> listCarClaims(Long carId) {
+        return carRepository.findById(carId)
+                .map(c -> claimRepository.findByCarId(carId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found with ID: " + carId));
+    }
+
 }
