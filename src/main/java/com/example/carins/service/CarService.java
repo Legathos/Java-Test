@@ -49,7 +49,7 @@ public class CarService {
     public Claim registerInsuranceClaim(Long carId, LocalDate claimDate, String description, Double amount) {
         Optional<Car> carOpt = carRepository.findById(carId);
         if (carOpt.isEmpty()) {
-            throw new IllegalArgumentException("Car not found with ID: " + carId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found with ID: " + carId);
         }
 
         Car car = carOpt.get();
