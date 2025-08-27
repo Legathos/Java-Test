@@ -97,6 +97,12 @@ public class CarController {
      */
     @GetMapping("/cars/{carId}/history")
     public List<ClaimDto> getCars(@PathVariable Long carId) {
-        return service.listCarClaims(carId).stream().map(c -> new ClaimDto(c.getId(), c.getCar().getId(), c.getClaimDate(), c.getDescription(), c.getAmount())).toList();
+        return service.listCarClaims(carId).stream().map(
+                c -> new ClaimDto(
+                        c.getId(),
+                        c.getCar().getId(),
+                        c.getClaimDate(),
+                        c.getDescription(),
+                        c.getAmount())).toList();
     }
     }
