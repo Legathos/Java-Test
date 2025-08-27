@@ -32,8 +32,9 @@ public class CarService {
     }
 
     public boolean isInsuranceValid(Long carId, LocalDate date) {
-        if (carId == null || date == null) return false;
-        // TODO: optionally throw NotFound if car does not exist
+        if (carId == null || carRepository.findById(carId).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Car not found with ID: " + carId);
+        }
 
         // Fix policies with null endDate
         List<InsurancePolicy> badPolicies = policyRepository.findByCarIdAndEndDateIsNull(carId);
