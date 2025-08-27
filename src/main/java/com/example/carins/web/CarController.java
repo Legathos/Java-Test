@@ -47,6 +47,19 @@ public class CarController {
 
     public record InsuranceValidityResponse(Long carId, String date, boolean valid) {}
 
+    /***
+     *  This endpoint receives the car ID and a JSON body as shown below, returning a http response
+     *  and registers a claim in the database
+     * @param carId
+     * @param claimDto
+     * example:
+     * {
+     *     "claimDate": "2024-11-01",
+     *     "description": "Broken window",
+     *     "amount": 500.00
+     * }
+     * @return http response
+     */
     @PostMapping("/cars/{carId}/claims")
     public ResponseEntity<ClaimDto> registerClaim(@PathVariable Long carId, @Valid @RequestBody ClaimDto claimDto) {
         try {
@@ -77,6 +90,11 @@ public class CarController {
         }
     }
 
+    /***
+     * The endpoint receives a car ID and returns a list of all claims made on this vehicle
+     * @param carId
+     * @return List<ClaimDto>
+     */
     @GetMapping("/cars/{carId}/history")
     public List<ClaimDto> getCars(@PathVariable Long carId) {
         return service.listCarClaims(carId).stream().map(c -> new ClaimDto(c.getId(), c.getCar().getId(), c.getClaimDate(), c.getDescription(), c.getAmount())).toList();
