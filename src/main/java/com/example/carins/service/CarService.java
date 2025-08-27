@@ -54,4 +54,13 @@ public class CarService {
         Claim claim = new Claim(car, claimDate, description, amount);
         return claimRepository.save(claim);
     }
+
+    public List<Claim> listCarClaims(Long carId) {
+        Optional<Car> carOpt = carRepository.findById(carId);
+        if (carOpt.isEmpty()) {
+            throw new IllegalArgumentException("Car not found with ID: " + carId);
+        }
+        return claimRepository.findByCarId(carId);
+    }
+
 }
