@@ -17,7 +17,7 @@ public class InsurancePolicy {
     private String provider;
     @NotNull(message = "Start date is required")
     private LocalDate startDate;
-    @NotNull(message = "Start date is required")
+    @NotNull(message = "End date is required")
     private LocalDate endDate; // nullable == open-ended
 
     public InsurancePolicy() {}
